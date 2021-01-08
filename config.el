@@ -253,3 +253,9 @@
 
 (map!
  :n "SPC o o" 'my-switch-shell-run-last-cmd)
+
+;; LOCALE
+
+;; https://stackoverflow.com/a/28938491
+;; because of org mode dates
+(setq system-time-locale "C")
