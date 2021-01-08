@@ -205,6 +205,8 @@
       "** TODO %c %^g\n- State \"TODO\"       from              %U")
      ))
 
+;; org reveal
+(add-hook! org-mode 'org-re-reveal)
 
 ;; CODING
 ;; python
