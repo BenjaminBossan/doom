@@ -255,10 +255,33 @@
     (comint-previous-input 1)
     (comint-send-input)
     (if (not (string= bname "*shell*"))
-        (other-window 1))))
+        (other-window -1))))
 
 (map!
  :n "SPC o o" 'my-switch-shell-run-last-cmd)
+
+
+(defun my-previous-pytest ()
+  "Run previous pytest command.
+
+  Switches to shell and runs the last pytest command from comint
+  history."
+  (interactive)
+  (let* ((buffer-now (buffer-name))
+         (buffer-is-shell (string= buffer-now "*shell*")))
+    (unless buffer-is-shell
+      (progn
+        (other-window 1)
+        (switch-to-buffer "*shell*")))
+    (goto-char (point-max))
+    (message (comint-previous-matching-input "^py.test" 1))
+    (comint-send-input)
+    (unless buffer-is-shell
+      (other-window -1))))
+
+(map!
+ :mode python-mode
+ "C-c SPC" #'my-previous-pytest)
 
 ;; LOCALE
 
