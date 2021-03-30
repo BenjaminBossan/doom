@@ -94,6 +94,7 @@
 
 (map!
  :n "ö" 'evil-window-next
+ :n "Ö" 'evil-window-prev
  :n "ä" 'mode-line-other-buffer)
 
 ;; a bit easier and more familiar to type than $, existing kbd useless
