@@ -58,3 +58,6 @@
 ;; APPEARANCE
 (package! org-superstar)
 (package! beacon)
+
+;; ORG
+(package! org-re-reveal)
