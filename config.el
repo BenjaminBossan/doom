@@ -212,12 +212,13 @@
      ))
 
 ;; org reveal
-(add-hook! org-mode 'org-re-reveal)
+(add-hook! 'org-mode #'org-re-reveal)
 
 ;; CODING
 ;; python
 (use-package! pyvenv
   :config (setenv "WORKON_HOME" "~/anaconda3/envs"))
+
 (map!
  :mode python-mode
  "M-<right>" 'python-indent-shift-right
