@@ -151,6 +151,11 @@
 (map!
  :i "C-w" #'my-kill-word-or-region-dwim)
 
+;; activate fine-grained undo in normal mode, instead of undoing the whole last
+;; insertion -> works as known from default Emacs
+;; https://stackoverflow.com/a/11656942
+(setq! evil-want-fine-undo t)
+
 ;; APPEARANCE
 (add-hook! org-mode 'org-superstar-mode)
 
