@@ -232,8 +232,8 @@
 (after! org
   (add-to-list
    'org-capture-templates
-     '("s" "screening with rexx"
-      entry (file+headline "rexx.org" "first round")
+     '("s" "screening"
+      entry (file+headline "hiring.org" "In progress")
       "** TODO %c %^g\n- State \"TODO\"       from              %U")
      ))
 
