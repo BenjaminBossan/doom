@@ -129,6 +129,23 @@
  :ni "M-<up>" 'move-line-up
  :ni "M-<down>" 'move-line-down)
 
+;; key chord
+
+(use-package! key-chord
+ :config
+ (key-chord-mode 1))
+
+(defun my-escape-and-save-file ()
+    "Force normal state and save file"
+    (interactive)
+    (evil-force-normal-state)
+    (save-buffer))
+
+;; after editing text, press "vv" to instantly go back to normal mode and save
+;; the file (basically ESC & SPC+f+s)
+(after! key-chord
+  (key-chord-define-global "vv" #'my-escape-and-save-file))
+
 ;; EDIT
 (map!
  :nv "M-'" 'comment-region)

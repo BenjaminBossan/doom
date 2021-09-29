@@ -49,11 +49,8 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-
-
 ;; SEARCH
 (package! avy)
-
 
 ;; APPEARANCE
 (package! org-superstar)
@@ -61,3 +58,7 @@
 
 ;; ORG
 (package! org-re-reveal)
+
+;; GENERAL
+
+(package! use-package-chords)
