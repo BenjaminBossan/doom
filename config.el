@@ -70,6 +70,19 @@
 (setq! evil-move-cursor-back nil)
 (setq! evil-move-beyond-eol t)
 
+;; using o or O on a comment line doesn't create another comment line
+(setq! evil-want-o/O-to-continue-comments nil)
+
+(use-package! evil
+  :config
+  ;; use visual-line motions even outside of visual-line-mode buffers
+  ;; from https://youtu.be/xaZMwNELaJY?t=2337
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  ;; start shell mode in insert mode
+  (evil-set-initial-state 'shell-mode 'insert))
+
 ;; faster than SPC u
 (map!
  :n "U" 'universal-argument)
