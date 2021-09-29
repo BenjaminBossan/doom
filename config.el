@@ -213,11 +213,7 @@
 
 (map!
  :mode org-mode
- :n "SPC m m" 'my-org-date-time)
-
-(map!
- :mode org-mode
- :n  "SPC m j" 'my-org-date)
+ :n "SPC m j" 'my-org-date-time)
 
 ;; capture
 (after! org
@@ -230,6 +226,12 @@
 
 ;; org reveal
 (add-hook! 'org-mode #'org-re-reveal)
+
+;; org roam
+(setq! org-roam-directory "~/work/orga/roam")
+(map!
+ :mode org-mode
+ :n "SPC n r t" #'org-roam-buffer-toggle-display)
 
 ;; CODING
 ;; python
