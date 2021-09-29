@@ -59,6 +59,13 @@
 ;; ORG
 (package! org-re-reveal)
 
+;; CODING
+;; requires tree-sitter
+;; download from https://github.com/tree-sitter/tree-sitter/releases
+;; extract, make executable, move to $PATH
+(package! tree-sitter)
+(package! tree-sitter-langs)
+
 ;; GENERAL
 
 (package! use-package-chords)

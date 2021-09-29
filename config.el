@@ -288,6 +288,13 @@
  :ni "C-c C-l" 'my-rst-insert-external-link)
 
 
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+
 ;; SHELL
 (defun my-switch-shell-run-last-cmd ()
   "Switch to shell buffer and run last cmd."
