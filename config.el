@@ -262,6 +262,18 @@
  :n "M-r" 'anaconda-mode-find-references
  :n "M-=" 'anaconda-mode-find-assignments)
 
+(defun my-python-breakpoint ()
+  "Insert a highlighted Python breakpoint"
+  (interactive)
+  (evil-open-below 1)
+  (insert "breakpoint()")
+  (highlight-lines-matching-regexp "^[ ]*breakpoint")
+  (evil-change-to-previous-state))
+
+(map!
+ :mode python-mode
+ :nv "SPC c b" #'my-python-breakpoint)
+
 ;; RST (restructured text mode)
 
 (defun my-rst-insert-external-link ()
