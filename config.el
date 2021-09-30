@@ -157,7 +157,9 @@
 ;; after editing text, press "vv" to instantly go back to normal mode and save
 ;; the file (basically ESC & SPC+f+s)
 (after! key-chord
-  (key-chord-define-global "vv" #'my-escape-and-save-file))
+  (key-chord-define-global "vv" #'my-escape-and-save-file)
+  (key-chord-define-global "VV" #'my-escape-and-save-file)
+  (key-chord-define-global "JK" #'evil-force-normal-state))
 
 ;; EDIT
 (map!
