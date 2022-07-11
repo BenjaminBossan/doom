@@ -29,7 +29,8 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq! org-directory "~/work/orga/")
+(setq! org-directory "~/work/hf/orga/")
+(setq! org-capture-todo-file "/home/vinh/work/hf/orga/todo.org")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -164,6 +165,8 @@
 ;; EDIT
 (map!
  :nv "M-'" 'comment-region)
+(map!
+ :nv "SPC c #" 'comment-dwim)
 
 ;; need this in visual mode, by default M-w (s-w) kills the buffer there
 (map!
@@ -225,10 +228,35 @@
       (org-time-stamp nil)
       (insert " "))))
 
-
 (map!
  :mode org-mode
  :n "SPC m j" 'my-org-date-time)
+
+(defvar my-logseq-dir (file-name-concat (expand-file-name "~") "Dropbox" "logseq")
+  "Logseq file directory, e.g. '/home/Bob/logseq/'")
+(defun my-logseq-journal-entry (prompt time)
+  "Create a journal entry PROMPT into logseq's journal at time TIME.
+
+  Use the journal file of the current date and append to the end.
+
+  If TIME argument left is empty, take the current time."
+  (interactive (list (read-string "task: ")
+                     (read-string
+                      (format "time (default: '%s'): " (shell-command-to-string "echo -n $(date +%H:%M)")))))
+  (let* ((cur-time (shell-command-to-string "echo -n $(date +%H:%M)"))
+         (cur-date (shell-command-to-string "echo -n $(date +%Y_%m_%d)"))
+         (filename (file-name-concat my-logseq-dir "journals" (format "%s.org" cur-date))))
+    (progn
+      (if (string= time "")
+          (setq stime cur-time)
+        (setq stime time))
+      (setq entry (format "<%s> %s" stime prompt))
+      ;;(message (format "echo '\n* <%s> %s' >> %s" stime prompt filename))
+      (shell-command (format "echo '\n* %s' >> %s" entry filename))
+      (message (format "'%s' added to %s" entry filename))
+      )))
+
+(map! :n "C-t" #'my-logseq-journal-entry)
 
 ;; capture
 (after! org
@@ -237,6 +265,14 @@
      '("s" "screening"
       entry (file+headline "hiring.org" "In progress")
       "** TODO %c %^g\n- State \"TODO\"       from              %U")
+     ))
+
+(after! org
+  (add-to-list
+   'org-capture-templates
+     '("T" "TODO"
+      entry (file+headline "todo.org" "Inbox")
+      "** TODO %?\n- State \"TODO\"       from              %U")
      ))
 
 ;; org reveal
