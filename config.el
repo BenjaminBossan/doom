@@ -195,6 +195,45 @@
 ;; https://stackoverflow.com/a/11656942
 (setq! evil-want-fine-undo t)
 
+
+;; this command requires the minor mode defined below
+(defun my-window-at-top ()
+  "Open a window of the same buffer at the top
+
+  Basically, a way to jump to the top of the current file, mostly
+  in order to quickly add new imports. This temporary window can
+  be closed using 'C-c C-c'."
+  (interactive)
+  (setq buf-cur (current-buffer))
+  (split-window-below 24)
+  (switch-to-buffer buf-cur)
+  (evil-goto-first-line 5)
+  (recenter-top-bottom 5)
+  (my-window-at-top--minor-mode 1)
+  (message "C-c C-c to close window"))
+
+;; local kbd to quickly close the window again
+(defun my-window-at-top--close-and-deactivate ()
+  (interactive)
+  (my-window-at-top--minor-mode 0)
+  (+workspace/close-window-or-workspace)
+  (other-window -1))
+
+;; We need a minor mode to create a local kbd
+(defvar my-window-at-top--minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") #'my-window-at-top--close-and-deactivate)
+    map)
+  "Minor mode specific for only #'my-window-at-top")
+
+(define-minor-mode my-window-at-top--minor-mode
+  "A minor mode so that my key settings override annoying major modes."
+  :init-value nil
+  :lighter " C-c C-c to close")
+
+(map! :nvi "C-c i" #'my-window-at-top)
+
+
 ;; APPEARANCE
 (add-hook! org-mode 'org-superstar-mode)
 
