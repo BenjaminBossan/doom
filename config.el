@@ -284,6 +284,28 @@
  :mode org-mode
  :n "SPC n r t" #'org-roam-buffer-toggle-display)
 
+;; journaling
+
+;; (defun my-switch-to-journal ()
+;;   "Switch to journal and create an entry.
+
+;;   I did not manage to implement this with org capture because the
+;;   title of the last entry in the journal is not fixed but depends
+;;   on the data."
+;;   (interactive)
+;;   (let ((is-journal-buf-p (equal (buffer-name) "journal.org")))
+;;     (unless is-journal-buf-p (switch-to-buffer "journal.org"))
+;;     (progn
+;;       (switch-to-buffer "journal.org")
+;;       (evil-goto-line)
+;;       (insert "** ")
+;;       (insert (read-string "Journal entry: "))
+;;       (my-org-date-time)
+;;       (save-buffer)
+;;       (unless is-journal-buf-p (mode-line-other-buffer)))))
+
+;; (map! :n "C-t" #'my-switch-to-journal)
+
 ;; CODING
 ;; python
 (use-package! pyvenv
