@@ -88,6 +88,10 @@
 (map!
  :n "U" 'universal-argument)
 
+;; shift click to select text, not open appearance menu
+;; from: https://christiantietze.de/posts/2022/07/shift-click-in-emacs-to-select/
+(global-set-key (kbd "S-<down-mouse-1>") #'mouse-set-mark)
+
 ;; SEARCH
 
 ;; avy considers all visible windows
