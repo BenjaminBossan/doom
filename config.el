@@ -429,7 +429,7 @@
         (other-window 1)
         (switch-to-buffer "*shell*")))
     (goto-char (point-max))
-    (message (comint-previous-matching-input "^py.test" 1))
+    (message (comint-previous-matching-input "pytest" 1))
     (comint-send-input)
     (unless buffer-is-shell
       (other-window -1))))
