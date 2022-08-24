@@ -443,3 +443,33 @@
 ;; https://stackoverflow.com/a/28938491
 ;; because of org mode dates
 (setq system-time-locale "C")
+
+
+
+
+;; https://stackoverflow.com/a/42252517
+(defun my-transpose-region--pop-all (list-of-lists)
+  "Pop each list in the list, return list of pop results
+and an indicator if some list has been exhausted."
+  (loop for tail on list-of-lists collect (pop (car tail))))
+
+(defun my-transpose-region--transpose-list-of-list (list-of-lists)
+  "Transpose the matrix."
+  (loop with tails = (copy-list list-of-lists)
+    while (some #'consp tails) ; or any?
+    collect (pop-all tails)))
+
+(defun my-transpose-region (beg end)
+  "Transpose words inside the marked region."
+  ;; Very primitive, ideally would use language specific lexing and preserve
+  ;; white space
+  (interactive "r")
+  (setq reg (buffer-substring beg end))
+  (message "%s" (type-of reg))
+  (setq lines (split-string reg "\n"))
+  (setq list-of-tokens (mapcar (lambda (line) (split-string line " ")) lines))
+  (setq list-transposed (transpose list-of-tokens))
+  (setq lines-transposed (mapcar (lambda (tokens) (string-join tokens " ")) list-transposed))
+  (setq reg-transposed (string-join lines-transposed "\n"))
+  (delete-active-region)
+  (insert reg-transposed))
