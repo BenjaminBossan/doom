@@ -234,6 +234,16 @@
 (map! :nvi "C-c i" #'my-window-at-top)
 
 
+(defun my-join-line ()
+  "Basically the opposite of fill-paragraph"
+  (interactive)
+  (evil-end-of-line)
+  (delete-char)
+  (just-one-space))
+
+(map! :n "SPC i x" #'my-join-line)
+
+
 ;; APPEARANCE
 (add-hook! org-mode 'org-superstar-mode)
 
@@ -443,8 +453,6 @@
 ;; https://stackoverflow.com/a/28938491
 ;; because of org mode dates
 (setq system-time-locale "C")
-
-
 
 
 ;; https://stackoverflow.com/a/42252517
