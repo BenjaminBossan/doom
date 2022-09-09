@@ -240,7 +240,7 @@
   "Basically the opposite of fill-paragraph"
   (interactive)
   (evil-end-of-line)
-  (delete-char)
+  (delete-char 1)
   (just-one-space))
 
 (map! :n "SPC i x" #'my-join-line)
