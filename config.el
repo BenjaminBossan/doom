@@ -95,7 +95,9 @@
 ;; SEARCH
 
 ;; avy considers all visible windows
-(setq! avy-all-windows nil)
+(setq! avy-all-windows t)
+
+(map! :nv "ß" 'evil-avy-goto-char-timer)
 
 ;; note use g s SPC instead
 (map!
