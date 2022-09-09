@@ -467,7 +467,7 @@ and an indicator if some list has been exhausted."
   "Transpose the matrix."
   (loop with tails = (copy-list list-of-lists)
     while (some #'consp tails) ; or any?
-    collect (pop-all tails)))
+    collect (my-transpose-region--pop-all tails)))
 
 (defun my-transpose-region (beg end)
   "Transpose words inside the marked region."
@@ -478,7 +478,7 @@ and an indicator if some list has been exhausted."
   (message "%s" (type-of reg))
   (setq lines (split-string reg "\n"))
   (setq list-of-tokens (mapcar (lambda (line) (split-string line " ")) lines))
-  (setq list-transposed (transpose list-of-tokens))
+  (setq list-transposed (my-transpose-region--transpose-list-of-list list-of-tokens))
   (setq lines-transposed (mapcar (lambda (tokens) (string-join tokens " ")) list-transposed))
   (setq reg-transposed (string-join lines-transposed "\n"))
   (delete-active-region)
