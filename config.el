@@ -239,9 +239,8 @@
 (defun my-join-line ()
   "Basically the opposite of fill-paragraph"
   (interactive)
-  (evil-end-of-line)
-  (delete-char 1)
-  (just-one-space))
+  (evil-next-visual-line)
+  (delete-indentation))
 
 (map! :n "SPC i x" #'my-join-line)
 
