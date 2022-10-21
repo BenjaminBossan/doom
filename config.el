@@ -92,6 +92,8 @@
 ;; from: https://christiantietze.de/posts/2022/07/shift-click-in-emacs-to-select/
 (global-set-key (kbd "S-<down-mouse-1>") #'mouse-set-mark)
 
+(map! "C-ö" 'embark-act)
+
 ;; SEARCH
 
 ;; avy considers all visible windows

@@ -69,3 +69,4 @@
 ;; GENERAL
 
 (package! use-package-chords)
+(package! embark)
