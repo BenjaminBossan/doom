@@ -390,6 +390,14 @@
  :mode python-mode
  :nv "SPC c b" #'my-python-breakpoint)
 
+;; when running the debugger from shell mode, open a buffer that shows the code
+;; and highlights current line
+(defun my-python-pdb-shell-mode-hook ()
+  (add-hook
+   'comint-output-filter-functions
+   'python-pdbtrack-comint-output-filter-function t))
+(add-hook 'shell-mode-hook 'my-python-pdb-shell-mode-hook)
+
 ;; RST (restructured text mode)
 
 (defun my-rst-insert-external-link ()
