@@ -299,8 +299,8 @@
   (interactive (list (read-string "task: ")
                      (read-string
                       (format "time (default: '%s'): " (shell-command-to-string "echo -n $(date +%H:%M)")))))
-  (let* ((cur-time (shell-command-to-string "echo -n $(date +%H:%M)"))
-         (cur-date (shell-command-to-string "echo -n $(date +%Y_%m_%d)"))
+  (let* ((cur-time (format-time-string "%H:%M"))
+         (cur-date (format-time-string "%Y_%m_%d"))
          (filename (file-name-concat my-logseq-dir "journals" (format "%s.org" cur-date))))
     (progn
       (if (string= time "")
