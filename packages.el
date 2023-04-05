@@ -66,6 +66,13 @@
 (package! tree-sitter)
 (package! tree-sitter-langs)
 
+;; copilot.el: https://github.com/zerolfx/copilot.el#example-for-doom-emacs
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+
+;; GPT
+(package! gptel)
+
 ;; GENERAL
 
 (package! use-package-chords)

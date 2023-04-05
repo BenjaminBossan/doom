@@ -404,6 +404,31 @@
    'python-pdbtrack-comint-output-filter-function t))
 (add-hook 'shell-mode-hook 'my-python-pdb-shell-mode-hook)
 
+
+;; copilot.el: https://github.com/zerolfx/copilot.el#example-for-doom-emacs
+(use-package! copilot
+  ;; uncomment to activate copilot automatically
+  ;; :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+;; GPTel, see also https://systemcrafters.net/live-streams/march-31-2023/
+;; put OpenAI key in ~/key.txt
+(defun dw/read-openai-key ()
+  (with-temp-buffer
+    (insert-file-contents "~/.openaikey.txt")
+    (string-trim (buffer-string))))
+
+(use-package! gptel
+  :init
+  (setq-default gptel-model "gpt-3.5-turbo"
+                gptel-playback t
+                gptel-default-mode 'org-mode
+                gptel-api-key #'dw/read-openai-key))
+
 ;; RST (restructured text mode)
 
 (defun my-rst-insert-external-link ()
