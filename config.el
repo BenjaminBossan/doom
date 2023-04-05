@@ -246,6 +246,12 @@
 
 (map! :n "SPC i x" #'my-join-line)
 
+;; Disable undo-fu mode because it messes with undoing in regions, which now
+;; works again using "C-_". Theoretically, there is
+;; undo-fu-allow-undo-in-region, but somehow it doesn't work consistently when
+;; undoing across multiple regions.
+(setq! undo-fu-mode nil)
+
 
 ;; APPEARANCE
 (add-hook! org-mode 'org-superstar-mode)
