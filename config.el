@@ -490,7 +490,6 @@ and an indicator if some list has been exhausted."
   ;; white space
   (interactive "r")
   (setq reg (buffer-substring beg end))
-  (message "%s" (type-of reg))
   (setq lines (split-string reg "\n"))
   (setq list-of-tokens (mapcar (lambda (line) (split-string line " ")) lines))
   (setq list-transposed (my-transpose-region--transpose-list-of-list list-of-tokens))
