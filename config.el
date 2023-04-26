@@ -556,3 +556,15 @@ and an indicator if some list has been exhausted."
   (delete-region beg end)
   (insert commented-rst)
   )
+
+;; WINDOWS/BUFFERS
+
+(defun my-kill-other-window-buffer ()
+  "Kill the buffer in the other window, assuming there are 2 windows open."
+  (interactive)
+  (other-window 1)
+  (kill-this-buffer)
+  (other-window -1))
+
+(map!
+ :nvi "C-x K" #'my-kill-other-window-buffer)
