@@ -568,3 +568,20 @@ and an indicator if some list has been exhausted."
 
 (map!
  :nvi "C-x K" #'my-kill-other-window-buffer)
+
+;; CLOUD
+
+;; GCP ssh into VM cloud instance
+;; from: https://gist.github.com/jackrusher/36c80a2fd6a8fe8ddf46bc7e408ae1f9
+(require 'tramp)
+(add-to-list 'tramp-methods
+  '("gcssh"
+    (tramp-login-program        "gcloud compute ssh")
+    (tramp-login-args           (("%h")))
+    (tramp-async-args           (("-q")))
+    (tramp-remote-shell         "/bin/sh")
+    (tramp-remote-shell-args    ("-c"))
+    (tramp-gw-args              (("-o" "GlobalKnownHostsFile=/dev/null")
+                                 ("-o" "UserKnownHostsFile=/dev/null")
+                                 ("-o" "StrictHostKeyChecking=no")))
+    (tramp-default-port         22)))
