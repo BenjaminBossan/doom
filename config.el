@@ -429,6 +429,17 @@
                 gptel-default-mode 'org-mode
                 gptel-api-key #'dw/read-openai-key))
 
+
+(defun my-switch-quotes-in-region (start end)
+  "Switch single and double quotes within the marked region.
+
+  Basically toggles single and double quotes. Written by GPT-4."
+  (interactive "r")
+  (save-excursion
+    (goto-char start)
+    (while (re-search-forward "\\(['\"]\\)" end t)
+      (replace-match (if (string= (match-string 0) "\"") "'" "\"") t t))))
+
 ;; RST (restructured text mode)
 
 (defun my-rst-insert-external-link ()
