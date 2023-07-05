@@ -94,6 +94,9 @@
 
 (map! "C-ö" 'embark-act)
 
+;; don't permanently delete files
+(setq! delete-by-moving-to-trash t)
+
 ;; SEARCH
 
 ;; avy considers all visible windows
