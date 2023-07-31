@@ -309,7 +309,7 @@
                      (read-string
                       (format "time (default: '%s'): " (shell-command-to-string "echo -n $(date +%H:%M)")))))
   (let* ((cur-time (format-time-string "%H:%M"))
-         (cur-date (format-time-string "%Y_%m_%d"))
+         (cur-date (format-time-string "%Y-%m-%d"))
          (filename (file-name-concat my-logseq-dir "journals" (format "%s.org" cur-date))))
     (progn
       (if (string= time "")
