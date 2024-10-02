@@ -617,3 +617,21 @@ and an indicator if some list has been exhausted."
                                  ("-o" "UserKnownHostsFile=/dev/null")
                                  ("-o" "StrictHostKeyChecking=no")))
     (tramp-default-port         22)))
+
+
+;; ADD THE COMMAND nvidia-monitor-start
+;; Add the 'lisp' directory to Emacs' load-path
+(add-to-list 'load-path (expand-file-name "lisp/" doom-user-dir))
+
+(use-package nvidia-monitor
+  :ensure nil
+  :load-path "lisp/"
+  :commands (nvidia-monitor-start)
+  :config
+  ;; Customize variables here if needed
+  (setq nvidia-monitor-update-interval 1
+        nvidia-monitor-tabulate-path  "/home/vinh/anaconda3/envs/peft/lib/python3.11/site-packages"
+        nvidia-monitor-max-rows 20))
+
+(add-to-list 'load-path "/home/vinh/work/doom/lisp/")
+;; END
