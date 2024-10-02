@@ -68,8 +68,7 @@
 
 ;; copilot.el: https://github.com/zerolfx/copilot.el#example-for-doom-emacs
 (package! copilot
-  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
-
+  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
 ;; GPT
 (package! gptel)
 
