@@ -414,16 +414,21 @@
 
 
 ;; add ruff support to flycheck
-;; see https://github.com/flycheck/flycheck/issues/1974#issuecomment-1343495202
+;; https://github.com/flycheck/flycheck/issues/1974#issuecomment-1778966650
+(flycheck-def-config-file-var flycheck-python-ruff-config python-ruff
+                              '("pyproject.toml" "ruff.toml" ".ruff.toml"))
+
 (flycheck-define-checker python-ruff
-  "A Python syntax and style checker using the ruff utility.
+  "A Python syntax and style checker using the ruff.
 To override the path to the ruff executable, set
 `flycheck-python-ruff-executable'.
-See URL `http://pypi.python.org/pypi/ruff'."
+
+See URL `https://beta.ruff.rs/docs/'."
   :command ("ruff"
-            "--format=text"
-            (eval (when buffer-file-name
-                    (concat "--stdin-filename=" buffer-file-name)))
+            "check"
+            (config-file "--config" flycheck-python-ruff-config)
+            "--output-format=concise"
+            "--stdin-filename" source-original
             "-")
   :standard-input t
   :error-filter (lambda (errors)
@@ -435,10 +440,19 @@ See URL `http://pypi.python.org/pypi/ruff'."
             (id (one-or-more (any alpha)) (one-or-more digit)) " "
             (message (one-or-more not-newline))
             line-end))
-  :modes python-mode)
+  :modes (python-mode python-ts-mode)
+  :next-checkers ((warning . python-mypy)))
 
-(add-to-list 'flycheck-checkers 'python-ruff)
-
+;; Python config: Use ruff + mypy.
+(defun python-flycheck-setup ()
+  (progn
+    (flycheck-select-checker 'python-ruff)
+    (flycheck-add-next-checker 'python-ruff 'python-mypy)
+    ))
+(after! flycheck
+  (add-to-list 'flycheck-checkers 'python-ruff)
+  (add-hook 'python-mode-local-vars-hook #'python-flycheck-setup 'append)
+  )
 
 ;; copilot.el: https://github.com/zerolfx/copilot.el#example-for-doom-emacs
 (use-package! copilot
