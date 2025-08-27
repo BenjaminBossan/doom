@@ -465,7 +465,7 @@ See URL `https://beta.ruff.rs/docs/'."
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
 ;; GPTel, see also https://systemcrafters.net/live-streams/march-31-2023/
-;; put OpenAI key in ~/key.txt
+;; put OpenAI key in ~/.openaikey.txt
 (defun dw/read-openai-key ()
   (with-temp-buffer
     (insert-file-contents "~/.openaikey.txt")
