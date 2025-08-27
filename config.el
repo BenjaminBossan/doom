@@ -111,6 +111,9 @@
 (map!
  :nvi "C-s" 'swiper)
 
+(map!
+ :nv "SPC t i" #'imenu-list)
+
 ;; NAVIGATION
 
 (map!

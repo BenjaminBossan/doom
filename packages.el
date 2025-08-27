@@ -76,3 +76,4 @@
 
 (package! use-package-chords)
 (package! embark)
+(package! imenu-list)  ;; https://github.com/bmag/imenu-list
