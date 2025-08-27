@@ -178,6 +178,159 @@
   (key-chord-define-global "VV" #'my-escape-and-save-file)
   (key-chord-define-global "JK" #'evil-force-normal-state))
 
+;; JUMPING TO COVERAGE REPORT FILES
+;; by ChatGPT-5
+
+(defgroup my-coverage nil
+  "Jump from a coverage report line to the corresponding file/line."
+  :group 'tools)
+
+(defcustom my-coverage-project-root nil
+  "If set, treat this as the project root when resolving coverage paths.
+Leave nil to auto-detect (project.el / VC / default-directory)."
+  :type '(choice (const :tag "Auto-detect" nil) directory))
+
+(defun my--coverage--file-on-line ()
+  "Return the filename token on the current line (or nil)."
+  (save-excursion
+    (beginning-of-line)
+    (when (re-search-forward "^[ \t]*\\(\\S-+\\)" (line-end-position) t)
+      (let ((tok (match-string 1)))
+        (unless (or (string-prefix-p "TOTAL" tok)
+                    (string-prefix-p "----" tok))
+          tok)))))
+
+(defun my--coverage--point-on-filename-p (&optional fname)
+  "Return non-nil if point is inside FNAME token on this line."
+  (save-excursion
+    (beginning-of-line)
+    (let* ((fname (or fname (my--coverage--file-on-line)))
+           (bol   (line-beginning-position)))
+      (when fname
+        (when (re-search-forward (concat "\\b" (regexp-quote fname) "\\b")
+                                 (line-end-position) t)
+          (let ((beg (+ bol (match-beginning 0)))
+                (end (+ bol (match-end 0)))
+                (pos (point)))
+            (and (>= (point) beg) (<= (point) end))))))))
+
+(defun my--coverage--number-at-point ()
+  "If point sits on a number or range like 81-142, return the start
+line (as number).
+
+Return nil if there's no number/range *at point*."
+  (let* ((c (char-after))
+         (digit-or-dash (and c (or (and (>= c ?0) (<= c ?9)) (= c ?-)))))
+    (when digit-or-dash
+      (save-excursion
+        (skip-chars-backward "0-9-")
+        (let ((beg (point)))
+          (skip-chars-forward "0-9-")
+          (let* ((tok (buffer-substring-no-properties beg (point))))
+            (when (string-match-p "\\`[0-9]+\\(-[0-9]+\\)?\\'" tok)
+              (string-to-number (car (split-string tok "-"))))))))))
+
+(defun my--coverage--resolve-file (token)
+  "Resolve TOKEN (a path from the coverage table) to an absolute
+existing file.
+
+Tries `my-coverage-project-root', then project.el, then VC root,
+then default-directory."
+  (let* ((abs (when (file-name-absolute-p token) token))
+         (proj-root (cond
+                     (my-coverage-project-root my-coverage-project-root)
+                     ((and (fboundp 'project-current)
+                           (project-current nil))
+                      (car (project-roots (project-current nil))))
+                     ((vc-root-dir))
+                     (t default-directory)))
+         (cands (cl-remove-if-not #'identity
+                                  (list abs
+                                        (and proj-root (expand-file-name token proj-root))
+                                        (expand-file-name token default-directory)))))
+    (or (cl-some (lambda (p) (when (and p (file-exists-p p)) p)) cands)
+        (user-error "Cannot find file for %s (tried: %s)" token cands))))
+
+(defun my--coverage--number-or-range-at-point ()
+  "If point is on a number or range like 81-142, return a
+cons (START . END).
+
+If only a single number, END = START. Return nil if nothing
+found."
+  (let ((c (char-after)))
+    (when (and c (or (and (>= c ?0) (<= c ?9)) (= c ?-)))
+      (save-excursion
+        (skip-chars-backward "0-9-")
+        (let ((beg (point)))
+          (skip-chars-forward "0-9-")
+          (let* ((tok (buffer-substring-no-properties beg (point))))
+            (when (string-match-p "\\`[0-9]+\\(-[0-9]+\\)?\\'" tok)
+              (let* ((parts (split-string tok "-"))
+                     (start (string-to-number (car parts)))
+                     (end (if (cadr parts)
+                              (string-to-number (cadr parts))
+                            start)))
+                (cons start end)))))))))
+
+(defun my--coverage--visit (file &optional range)
+  "Open FILE (other window if possible) and go to RANGE.
+RANGE should be a cons (START . END), where END may equal START.
+If END > START, activate a region covering that range."
+  (let ((target (my--coverage--resolve-file file)))
+    (cond
+     ;; If exactly two windows, use the *other* one.
+     ((= (count-windows) 2)
+      (let ((w (next-window (selected-window) 'no-minibuf t)))
+        (select-window w)
+        (find-file target)))
+     (t
+      (find-file-other-window target))))
+  (goto-char (point-min))
+  (when range
+    (let ((start (car range))
+          (end (cdr range)))
+      (forward-line (1- start))
+      (if (> end start)
+          (progn
+            (push-mark (point) t t)  ;; mark start
+            (forward-line (1- (- end start)))
+            (end-of-line))
+        ;; just move to single line
+        (forward-line 0)))))
+
+(defun my-coverage-jump ()
+  "From a coverage report line, jump to the relevant file/line or
+mark a range.
+
+Behavior:
+
+1. If point is on the filename token (e.g. \"src/peft/auto.py\"),
+open the file at its start.
+2. If point is on a number token (e.g. \"61\"), jump to that
+line.
+3. If point is on a range token (e.g. \"81-142\"), jump to the
+first line of the range (81) and mark region.
+4. If there are two windows, reuse the *other* window; otherwise
+split as needed."
+  (interactive)
+  (let* ((file (my--coverage--file-on-line))
+         (on-file (and file (my--coverage--point-on-filename-p file)))
+         (range (my--coverage--number-or-range-at-point)))
+    (cond
+     (on-file
+      (my--coverage--visit file (cons 1 1)))
+     ((and file range)
+      (my--coverage--visit file range))
+     (file
+      (my--coverage--visit file (cons 1 1)))
+     (t
+      (user-error "No coverage file found on this line")))))
+
+(map!
+ :nv "SPC f o" 'my-coverage-jump)
+
+;; END JUMPING TO COVERAGE REPORT FILES
+
 ;; EDIT
 (map!
  :nv "M-'" 'comment-region)
