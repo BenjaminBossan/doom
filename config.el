@@ -607,6 +607,11 @@ See URL `https://beta.ruff.rs/docs/'."
   (add-hook 'python-mode-local-vars-hook #'python-flycheck-setup 'append)
   )
 
+;; doom-large-file somehow prevents normal-mode (and hence python-mode) to be run when opening Python files
+(setq doom-large-file-size-alist
+      '(("\\.py\\'" . nil)
+        ("."       . 1.0)))
+
 ;; copilot.el: https://github.com/zerolfx/copilot.el#example-for-doom-emacs
 (use-package! copilot
   ;; uncomment to activate copilot automatically
