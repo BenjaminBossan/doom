@@ -176,6 +176,7 @@
 (after! key-chord
   (key-chord-define-global "vv" #'my-escape-and-save-file)
   (key-chord-define-global "VV" #'my-escape-and-save-file)
+  (key-chord-define-global "jk" #'evil-force-normal-state)
   (key-chord-define-global "JK" #'evil-force-normal-state))
 
 ;; JUMPING TO COVERAGE REPORT FILES
@@ -502,10 +503,10 @@ split as needed."
 (add-hook! 'org-mode #'org-re-reveal)
 
 ;; org roam
-(setq! org-roam-directory "~/work/orga/roam")
-(map!
- :mode org-mode
- :n "SPC n r t" #'org-roam-buffer-toggle-display)
+;; (setq! org-roam-directory "~/work/orga/roam")
+;; (map!
+;;  :mode org-mode
+;;  :n "SPC n r t" #'org-roam-buffer-toggle-display)
 
 ;; journaling
 
