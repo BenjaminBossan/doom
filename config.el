@@ -163,7 +163,7 @@
  :config
  (key-chord-mode 1)
  :init
- (setq-default key-chord-two-keys-delay 0.3))
+ (setq-default key-chord-two-keys-delay 0.15))
 
 (defun my-escape-and-save-file ()
     "Force normal state and save file"
