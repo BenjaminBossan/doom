@@ -163,7 +163,7 @@
  :config
  (key-chord-mode 1)
  :init
- (setq-default key-chord-two-keys-delay 0.15))
+ (setq-default key-chord-two-keys-delay 0.075))
 
 (defun my-escape-and-save-file ()
     "Force normal state and save file"
@@ -176,8 +176,8 @@
 (after! key-chord
   (key-chord-define-global "vv" #'my-escape-and-save-file)
   (key-chord-define-global "VV" #'my-escape-and-save-file)
-  (key-chord-define-global "jk" #'evil-force-normal-state)
-  (key-chord-define-global "JK" #'evil-force-normal-state))
+  (key-chord-define-global "jk" #'evil-normal-state)
+  (key-chord-define-global "JK" #'evil-normal-state))
 
 ;; JUMPING TO COVERAGE REPORT FILES
 ;; by ChatGPT-5
