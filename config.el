@@ -535,6 +535,10 @@ split as needed."
 (use-package! pyvenv
   :config (setenv "WORKON_HOME" "~/anaconda3/envs"))
 
+(use-package anaconda-mode
+  :ensure t
+  :hook (python-mode . anaconda-mode))
+
 (map!
  :mode python-mode
  "M-<right>" 'python-indent-shift-right
