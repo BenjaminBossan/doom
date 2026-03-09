@@ -815,3 +815,97 @@ and an indicator if some list has been exhausted."
 
 (add-to-list 'load-path "/home/vinh/work/doom/lisp/")
 ;; END
+
+;; MISC utility commands
+
+;; written by Opus 4.6
+(defun my-code-screenshot (start end filename)
+  "Export the selected region as a PNG/SVG/PDF screenshot of the code.
+  The format is determined by the file extension."
+  (interactive
+   (let* ((beg (region-beginning))
+          (end (region-end))
+          (xdg-pictures
+           (or (ignore-errors
+                 (string-trim
+                  (shell-command-to-string "xdg-user-dir PICTURES")))
+               (expand-file-name "Pictures" "~")))
+          (base-name (or (file-name-sans-extension
+                          (file-name-nondirectory (or (buffer-file-name) "untitled")))
+                         "untitled"))
+          (default-name (format "%s_%s.png"
+                                base-name
+                                (format-time-string "%Y-%m-%d_%H%M%S")))
+          (default-path (expand-file-name default-name xdg-pictures)))
+     (list beg end (read-file-name "Save screenshot to: " nil default-path nil default-name))))
+  (let* ((ext (downcase (or (file-name-extension filename) "png")))
+         (format (pcase ext
+                   ("svg" 'svg)
+                   ("pdf" 'pdf)
+                   ("png" 'png)
+                   (_ (user-error "Unsupported format .%s — use .png, .svg, or .pdf" ext)))))
+    (when (and (memq format '(svg pdf))
+               (not (featurep 'cairo)))
+      (user-error "SVG/PDF export requires Emacs built with cairo support"))
+    (let* ((text (string-trim-right (buffer-substring start end)))
+           (mode major-mode)
+           (tmp-buf (generate-new-buffer " *code-screenshot*"))
+           (tmp-frame nil))
+      (unwind-protect
+          (progn
+            (with-current-buffer tmp-buf
+              (insert text)
+              (funcall mode)
+              (font-lock-ensure)
+              (setq-local display-line-numbers nil)
+              (setq-local mode-line-format nil)
+              (setq-local header-line-format nil)
+              (setq-local tab-line-format nil)
+              (setq-local cursor-type nil)
+              (setq-local indicate-empty-lines nil)
+              (hl-line-mode -1)
+              (goto-char (point-min)))
+            (let* ((lines (split-string text "\n"))
+                   (num-lines (length lines))
+                   (max-cols (apply #'max (mapcar #'string-width lines))))
+              (setq tmp-frame
+                    (make-frame
+                     `((name . "code-screenshot")
+                       (visibility . t)
+                       (cursor-type . nil)
+                       (minibuffer . nil)
+                       (left-fringe . 16)
+                       (right-fringe . 0)
+                       (internal-border-width . 24)
+                       (vertical-scroll-bars . nil)
+                       (horizontal-scroll-bars . nil)
+                       (menu-bar-lines . 0)
+                       (tool-bar-lines . 0)
+                       (tab-bar-lines . 0)
+                       (line-spacing . 2))))
+              (with-selected-frame tmp-frame
+                (switch-to-buffer tmp-buf)
+                (delete-other-windows)
+                (set-window-dedicated-p (selected-window) t)
+                (internal-show-cursor (selected-window) nil)
+                (let* ((char-width (frame-char-width tmp-frame))
+                       (char-height (frame-char-height tmp-frame))
+                       (border (* 2 24))
+                       (fringe 16)
+                       (pixel-w (+ (* max-cols char-width) border fringe))
+                       (pixel-h (+ (* num-lines (+ char-height 2)) border)))
+                  (set-frame-size tmp-frame pixel-w pixel-h t)
+                  (let ((win (frame-selected-window tmp-frame)))
+                    (set-window-start win (point-min))
+                    (set-window-vscroll win 0)
+                    (fit-window-to-buffer win num-lines num-lines))))
+              (redisplay t)
+              (sleep-for 0.2)
+              (redisplay t))
+            (let ((data (x-export-frames tmp-frame format)))
+              (with-temp-file filename
+                (set-buffer-multibyte nil)
+                (insert data)))
+            (message "Screenshot saved to %s" filename))
+        (when tmp-frame (delete-frame tmp-frame))
+        (when (buffer-live-p tmp-buf) (kill-buffer tmp-buf))))))
